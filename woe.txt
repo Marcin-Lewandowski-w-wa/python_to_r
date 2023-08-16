@@ -1,0 +1,22 @@
+woe_discrete <- function(df, discrete_var_name, good_bad_var_df) {
+  
+  df_out <- df[, c(discrete_var_name, good_bad_var_df)]
+  
+  df_out <- aggregate(df_out[[good_bad_var_df]], by = list(df_out[[discrete_var_name]]), FUN = length)
+  colnames(df_out) <- c(discrete_var_name, "n_obs")
+  
+  df_out$prop_n_obs <- df_out$n_obs / sum(df_out$n_obs)
+  
+  df_out$n_pos <- aggregate(df[[good_bad_var_df]], by = list(df[[discrete_var_name]]), FUN = sum)$x
+  df_out$prop_n_pos <- df_out$n_pos / sum(df[[good_bad_var_df]])
+  
+  df_out$n_neg <- df_out$n_obs - df_out$n_pos
+  df_out$prop_n_neg <- df_out$n_neg / sum(df_out$n_neg)
+  
+  df_out$WoE <- log(df_out$prop_n_pos / df_out$prop_n_neg)
+  df_out$IV <- (df_out$prop_n_pos - df_out$prop_n_neg) * df_out$WoE
+  
+  df_out <- df_out[order(df_out$WoE, decreasing = FALSE), ]
+  
+  return(df_out)
+}
