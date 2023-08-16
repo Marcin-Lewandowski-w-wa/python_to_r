@@ -1,0 +1,30 @@
+library(plotly)
+
+plot_by_woe <- function(df_WoE, radius_x = 0) {
+  x <- rownames(df_WoE)
+  y <- df_WoE$WoE
+  
+  plot <- plot_ly(x = x, y = y, type = "scatter", mode = "lines+markers",
+                  marker = list(symbol = "circle-open", size = 8),
+                  line = list(dash = "dash"),
+                  text = paste("WoE: ", round(y, 3)),
+                  hoverinfo = "text")
+  
+  plot <- plot %>% layout(
+    xaxis = list(title = names(df_WoE)[1], tickangle = radius_x),
+    yaxis = list(title = paste("Weight of Evidence by ", names(df_WoE)[1]))
+  )
+  
+  return(plot)
+}
+
+# Replace with your actual data
+data <- data.frame(
+  category = c("A", "B", "C", "D", "E"),
+  WoE = c(0.1, -0.2, 0.3, -0.4, 0.5)
+)
+
+# Call the function to create the interactive line plot
+plot <- plot_by_woe(data, radius_x = 45)
+
+plot
